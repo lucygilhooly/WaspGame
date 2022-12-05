@@ -4,31 +4,33 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static Wasp queen = new Wasp(80, 7, "Queen");
-    public static Wasp workerWasp = new Wasp(68, 10, "Worker Wasp");
-    public static Wasp droneWasp = new Wasp(60, 12, "Drone Wasp");
     public static ArrayList<Wasp> wasps = new ArrayList<>();
-
+    public static int index = (int) (Math.random() * wasps.size());
     public static boolean gameActive = true;
 
     public static void waspNest() {
-        System.out.println("1 " + queen.type + " with " + queen.hitPoints + " starting points");
-        System.out.println("5 " + workerWasp.type + "s with " + workerWasp.hitPoints + " starting points");
-        System.out.println("8 " + droneWasp.type + "s with " + droneWasp.hitPoints + " starting points");
+        for (int i = 0; i < 5; i++) {
+            Worker worker = new Worker(i);
+            wasps.add(worker);
+        }
+        for (int i = 0; i < 8; i++) {
+            Drone drone = new Drone(i);
+            wasps.add(drone);
+        }
+
+        Queen queen = new Queen();
         wasps.add(queen);
-        wasps.add(workerWasp);
-        wasps.add(workerWasp);
-        wasps.add(workerWasp);
-        wasps.add(workerWasp);
-        wasps.add(workerWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
-        wasps.add(droneWasp);
+
+        System.out.println("you have 1 queen, 5 worker wasps and 8 drone wasps in the nest");
+
+    }
+    public static void losePoints(){
+        wasps.get(index).hitPoints -= wasps.get(index).losePoints;
+        System.out.println("the " + wasps.get(index).type + " has " + wasps.get(index).hitPoints + " remaining");
+        if (wasps.get(index).hitPoints<= 0){
+            wasps.remove(wasps.get(index));
+            System.out.println(wasps.get(index).type + " wasp down, the remaining nest is " + wasps);
+        }
     }
 
     public static void shootWasp() {
@@ -37,40 +39,26 @@ public class Main {
             System.out.println("hit the enter key to take a shot at a wasp!");
             scanner.nextLine();
 
-            int index = (int) (Math.random() * wasps.size());
             System.out.println("you shot down a " + wasps.get(index).toString());
 
-            if (wasps.get(index) == queen){
-                queen.hitPoints -= queen.losePoints;
-                System.out.println("the queen has " + queen.hitPoints + " remaining");
-                if (queen.hitPoints == 0){
+            if (wasps.get(index).type.equals("Queen")){
+                wasps.get(index).hitPoints -= wasps.get(index).losePoints;
+                System.out.println("the queen has " + wasps.get(index).hitPoints + " remaining");
+                if (wasps.get(index).hitPoints == 0){
                     gameActive = false;
                     System.out.println("The Nest has been defeated!!");
                 }
             }
-            if (wasps.get(index) == workerWasp){
-                workerWasp.hitPoints -= workerWasp.losePoints;
-                System.out.println("the worker has " + workerWasp.hitPoints + " remaining");
-                if (workerWasp.hitPoints <= 0){
-                    wasps.remove(workerWasp);
-                    System.out.println("worker wasp down, the remaining nest is " + wasps.toString());
-                }
-            }
-            if (wasps.get(index) == droneWasp){
-                droneWasp.hitPoints -= droneWasp.losePoints;
-                System.out.println("the drone has " + droneWasp.hitPoints + " remaining");
-                if (droneWasp.hitPoints <= 0){
-                    wasps.remove(droneWasp);
-                    System.out.println("drone wasp down, the remaining nest is " + wasps.toString());
-                }
+            if (wasps.get(index).type.equals("Worker") || wasps.get(index).type.equals("Drone")){
+               losePoints();
             }
         }
 
     }
+
     public static void waspGame(){
 
         System.out.println("Welcome to my wasp game");
-        System.out.println("the starting team is: " );
         waspNest();
         shootWasp();
     }
